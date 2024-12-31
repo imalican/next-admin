@@ -4,7 +4,7 @@ A modern admin dashboard built with Next.js and Radix UI components, providing a
 
 ## Demo
 
-[Live Demo](https://next-admin-imalican.vercel.app)
+[Live Demo](https://next-admin-seven-azure.vercel.app)
 
 ## Features
 
