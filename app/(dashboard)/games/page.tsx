@@ -69,6 +69,24 @@ export default function GamesPage() {
     }
   };
 
+  const fetchGameById = async (id: string) => {
+    try {
+      const token = localStorage.getItem('admin-token');
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/games/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const data = await res.json();
+      setSelectedGame(data);
+    } catch (error) {
+      toast.error('Oyun detayları yüklenirken hata oluştu');
+    }
+  };
+
   const handleDragEnd = async (event: any) => {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
@@ -176,9 +194,9 @@ export default function GamesPage() {
                     key={game._id}
                     game={game}
                     categories={categories}
-                    onEdit={() => {
-                      setSelectedGame(game);
+                    onEdit={async () => {
                       setIsModalOpen(true);
+                      await fetchGameById(game._id);
                     }}
                     onDelete={() => handleDelete(game._id)}
                   />
@@ -190,14 +208,7 @@ export default function GamesPage() {
       </DndContext>
 
       <GameModal
-        game={
-          selectedGame
-            ? {
-                ...selectedGame,
-                categories: selectedGame.categories.map(cat => cat._id),
-              }
-            : null
-        }
+        game={selectedGame}
         categories={categories}
         isOpen={isModalOpen}
         onClose={() => {

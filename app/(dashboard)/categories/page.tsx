@@ -90,6 +90,24 @@ export default function CategoriesPage() {
     }
   };
 
+  const fetchCategoryById = async (id: string) => {
+    try {
+      const token = localStorage.getItem('admin-token');
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/categories/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const data = await res.json();
+      setSelectedCategory(data);
+    } catch (error) {
+      toast.error('Kategori detayları yüklenirken hata oluştu');
+    }
+  };
+
   const handleDelete = async (category: Category) => {
     setCategoryToDelete(category);
     setDeleteModalOpen(true);
@@ -191,9 +209,9 @@ export default function CategoriesPage() {
         key={category._id}
         id={category._id}
         category={category}
-        onEdit={() => {
-          setSelectedCategory(category);
+        onEdit={async () => {
           setIsModalOpen(true);
+          await fetchCategoryById(category._id);
         }}
         onDelete={() => handleDelete(category)}
         categories={categories}

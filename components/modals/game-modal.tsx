@@ -73,6 +73,8 @@ export function GameModal({
   const toast = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  console.log('Modal Props:', { isOpen, game });
+
   const initialState: Partial<Game> = {
     title: { tr: '', en: '' },
     description: { tr: '', en: '' },
@@ -91,14 +93,50 @@ export function GameModal({
   const [imageFile, setImageFile] = useState<File | null>(null);
 
   useEffect(() => {
+    console.log('useEffect çalıştı, game:', game);
+
     if (game) {
+      console.log('Gelen oyun verisi:', game);
+      console.log('Gelen oyun başlığı:', {
+        turkce: game.title?.tr,
+        ingilizce: game.title?.en,
+      });
+      console.log('Gelen oyun açıklaması:', {
+        turkce: game.description?.tr,
+        ingilizce: game.description?.en,
+      });
+      console.log('Gelen anahtar kelimeler:', {
+        turkce: game.keywords?.tr,
+        ingilizce: game.keywords?.en,
+      });
+
       const formattedGame = {
-        ...initialState,
-        ...game,
+        title: {
+          tr: game.title?.tr || '',
+          en: game.title?.en || '',
+        },
+        description: {
+          tr: game.description?.tr || '',
+          en: game.description?.en || '',
+        },
+        keywords: {
+          tr: game.keywords?.tr || [],
+          en: game.keywords?.en || [],
+        },
         categories: game.categories.map((cat: any) =>
           typeof cat === 'object' ? cat.$oid || cat._id : cat
         ),
+        instantLink: game.instantLink || '',
+        isNew: game.isNew || false,
+        isPopular: game.isPopular || false,
+        isActive: game.isActive !== undefined ? game.isActive : true,
+        playCount: game.playCount || 0,
+        orientation: game.orientation || 'horizontal',
+        image: game.image || '',
+        _id: game._id,
       };
+
+      console.log('Düzenlenmiş oyun verisi:', formattedGame);
       setFormData(formattedGame);
     } else {
       setFormData(initialState);
@@ -235,7 +273,7 @@ export function GameModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className='sm:max-w-[600px]'>
+      <DialogContent className='sm:max-w-[800px] max-h-[90vh] overflow-y-auto'>
         <DialogHeader>
           <DialogTitle>{game ? 'Oyun Düzenle' : 'Yeni Oyun'}</DialogTitle>
         </DialogHeader>
