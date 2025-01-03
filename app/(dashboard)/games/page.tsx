@@ -79,13 +79,14 @@ export default function GamesPage() {
     const newGames = arrayMove(games, oldIndex, newIndex);
     setGames(newGames);
 
-    // Yeni sıralamayı oluştur
-    const gameOrders = newGames.map((game, index) => ({
-      gameId: game._id,
-      order: index,
-    }));
-
     try {
+      const gameOrders = newGames.map((game, index) => ({
+        gameId: game._id,
+        order: index,
+      }));
+
+      console.log('Sending gameOrders:', gameOrders);
+
       const token = localStorage.getItem('admin-token');
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/games/order`,
@@ -99,10 +100,21 @@ export default function GamesPage() {
         }
       );
 
-      if (!res.ok) throw new Error('Sıralama güncellenemedi');
+      const data = await res.json();
+      console.log('Response:', data);
+
+      if (!res.ok) {
+        throw new Error(data.message || 'Sıralama güncellenemedi');
+      }
+
       toast.success('Sıralama güncellendi');
     } catch (error) {
-      toast.error('Sıralama güncellenirken hata oluştu');
+      setGames(games);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : 'Sıralama güncellenirken hata oluştu'
+      );
     }
   };
 
