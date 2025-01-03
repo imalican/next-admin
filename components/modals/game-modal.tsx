@@ -44,7 +44,7 @@ interface Game {
     tr: string[];
     en: string[];
   };
-  categories: string[];
+  categories: string[] | Category[];
   instantLink: string;
   isNew: boolean;
   isPopular: boolean;
@@ -298,13 +298,10 @@ export function GameModal({
             <label className='font-medium'>Kategoriler</label>
             <MultiSelect
               options={categoryOptions}
-              selected={formData.categories || []}
+              selected={(formData.categories || []).map(cat =>
+                typeof cat === 'string' ? cat : cat._id
+              )}
               onChange={values => {
-                console.log(
-                  'Selected categories before update:',
-                  formData.categories
-                );
-                console.log('New values:', values);
                 setFormData(prev => ({
                   ...prev,
                   categories: values,

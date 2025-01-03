@@ -17,13 +17,13 @@ interface Stats {
 }
 
 export default function HomePage() {
-  const { users } = useAuth();
+  const auth = useAuth();
   const [stats, setStats] = useState<Stats>({
     totalGames: 0,
     totalCategories: 0,
     totalPlays: 0,
     activeGames: 0,
-    totalUsers: users?.length || 0,
+    totalUsers: 0,
   });
   const [loading, setLoading] = useState(true);
   const toast = useToast();
@@ -34,17 +34,25 @@ export default function HomePage() {
 
   const fetchStats = async () => {
     try {
-      const [gamesRes, categoriesRes] = await Promise.all([
+      const token = localStorage.getItem('admin-token');
+      const headers = {
+        Authorization: `Bearer ${token}`,
+      };
+
+      const [gamesRes, categoriesRes, usersRes] = await Promise.all([
         fetch(`${process.env.NEXT_PUBLIC_API_URL}/games`),
         fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`),
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/users`, { headers }),
       ]);
-
-      if (!gamesRes.ok || !categoriesRes.ok) {
-        throw new Error('Veriler getirilemedi');
-      }
 
       const games = await gamesRes.json();
       const categories = await categoriesRes.json();
+      const users = await usersRes.json();
+
+      if (!gamesRes.ok) throw new Error('Oyunlar yüklenemedi');
+      if (!categoriesRes.ok) throw new Error('Kategoriler yüklenemedi');
+      if (!usersRes.ok)
+        throw new Error(users.message || 'Kullanıcılar yüklenemedi');
 
       const totalPlays = games.reduce(
         (sum: number, game: any) => sum + (game.playCount || 0),
@@ -57,11 +65,15 @@ export default function HomePage() {
         totalCategories: categories.length,
         totalPlays,
         activeGames,
-        totalUsers: users?.length || 0,
+        totalUsers: users.length,
       });
     } catch (error) {
       console.error('Stats Error:', error);
-      toast.error('İstatistikler yüklenirken hata oluştu');
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : 'İstatistikler yüklenirken hata oluştu'
+      );
     } finally {
       setLoading(false);
     }

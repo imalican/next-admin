@@ -190,7 +190,14 @@ export default function GamesPage() {
       </DndContext>
 
       <GameModal
-        game={selectedGame}
+        game={
+          selectedGame
+            ? {
+                ...selectedGame,
+                categories: selectedGame.categories.map(cat => cat._id),
+              }
+            : null
+        }
         categories={categories}
         isOpen={isModalOpen}
         onClose={() => {
