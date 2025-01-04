@@ -103,8 +103,6 @@ export default function GamesPage() {
         order: index,
       }));
 
-      console.log('Sending gameOrders:', gameOrders);
-
       const token = localStorage.getItem('admin-token');
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/games/order`,
@@ -119,12 +117,12 @@ export default function GamesPage() {
       );
 
       const data = await res.json();
-      console.log('Response:', data);
 
       if (!res.ok) {
         throw new Error(data.message || 'Sıralama güncellenemedi');
       }
 
+      setGames(data);
       toast.success('Sıralama güncellendi');
     } catch (error) {
       setGames(games);
