@@ -245,13 +245,15 @@ export default function CategoriesPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead></TableHead>
-                <TableHead>Görsel</TableHead>
+                <TableHead className='w-[50px]'></TableHead>
+                <TableHead className='w-[100px]'>Görsel</TableHead>
                 <TableHead>Türkçe İsim</TableHead>
                 <TableHead>İngilizce İsim</TableHead>
                 <TableHead>Üst Kategori</TableHead>
-                <TableHead>Sıra</TableHead>
-                <TableHead>İşlemler</TableHead>
+                <TableHead className='w-[80px]'>Sıra</TableHead>
+                <TableHead className='w-[80px]'>Yeni</TableHead>
+                <TableHead className='w-[80px]'>Popüler</TableHead>
+                <TableHead className='text-right'>İşlemler</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

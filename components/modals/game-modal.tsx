@@ -93,23 +93,17 @@ export function GameModal({
   const [imageFile, setImageFile] = useState<File | null>(null);
 
   useEffect(() => {
-    console.log('useEffect çalıştı, game:', game);
+    if (!isOpen) {
+      setFormData(initialState);
+      setImageFile(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  }, [isOpen]);
 
+  useEffect(() => {
     if (game) {
-      console.log('Gelen oyun verisi:', game);
-      console.log('Gelen oyun başlığı:', {
-        turkce: game.title?.tr,
-        ingilizce: game.title?.en,
-      });
-      console.log('Gelen oyun açıklaması:', {
-        turkce: game.description?.tr,
-        ingilizce: game.description?.en,
-      });
-      console.log('Gelen anahtar kelimeler:', {
-        turkce: game.keywords?.tr,
-        ingilizce: game.keywords?.en,
-      });
-
       const formattedGame = {
         title: {
           tr: game.title?.tr || '',
@@ -136,7 +130,6 @@ export function GameModal({
         _id: game._id,
       };
 
-      console.log('Düzenlenmiş oyun verisi:', formattedGame);
       setFormData(formattedGame);
     } else {
       setFormData(initialState);
